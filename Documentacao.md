@@ -9,49 +9,82 @@ Funcionalidades Principais:
 - Pagamento Seguro: Integração de um sistema de pagamento que garante transações seguras para usuários ao realizar reservas ou pagar por multas.
 
 ## 2. Componentes do Sistema
+
 1. **Frontend (React):**
-   - O React será utilizado para construir a interface do usuário, oferecendo uma interface interativa e amigável, com componentes reutilizáveis.
+   - O React será utilizado para construir a interface do usuário, oferecendo uma interface interativa e amigável, com componentes reutilizáveis. Ele se comunica com o backend através de requisições HTTP, recebendo dados e enviando informações sobre as ações dos usuários, como reservas e consultas.
 
 2. **Backend (Node.js com Express.js):**
-   - O backend será construído em Node.js, utilizando o framework Express.js para criar uma API robusta.
+   - O backend será construído em Node.js, utilizando o framework Express.js para criar uma API robusta. Ele processará as requisições vindas do frontend, executará a lógica de negócios necessária (como validações e manipulação de dados) e se comunicará com o banco de dados para armazenar ou recuperar informações.
 
 3. **Banco de Dados (MySQL com Sequelize):**
-   - Usaremos o MySQL como sistema de gerenciamento de banco de dados relacional, com Sequelize como ORM para facilitar o acesso e manipulação de dados.
+   - Usaremos o MySQL como sistema de gerenciamento de banco de dados relacional, com Sequelize como ORM para facilitar o acesso e manipulação de dados. O backend enviará consultas SQL através do Sequelize, que se encarregará de traduzir as operações em comandos SQL, permitindo o armazenamento e recuperação de dados, como informações de livros e usuários.
 
 4. **Testes da API (Postman/Insomnia):**
-   - Utilizaremos Postman e Insomnia para testar a API, garantindo que todas as rotas funcionem corretamente.
+   - Utilizaremos Postman e Insomnia para testar a API, garantindo que todas as rotas funcionem corretamente. Essas ferramentas permitem que simulemos requisições para verificar se o backend responde conforme o esperado e se a integração com o banco de dados está funcionando.
 
 5. **Controle de Versão (Git e GitHub):**
-   - O Git será usado para controle de versão e o GitHub para colaboração entre os membros da equipe.
+   - O Git será usado para controle de versão e o GitHub para colaboração entre os membros da equipe. Ele permitirá que todos os colaboradores acompanhem as mudanças no código, façam revisões e colaborem efetivamente no desenvolvimento do sistema.
 
 6. **Transporte por Terceiros:**
-   - Integração com serviços de transporte, permitindo que os usuários solicitem o transporte de itens e rastreiem suas encomendas.
+   - Integração com serviços de transporte permitirá que os usuários solicitem o transporte de itens e rastreiem suas encomendas. O backend fará chamadas para APIs externas de transporte, facilitando a comunicação entre os usuários e os serviços de entrega.
 
 7. **Gerenciamento:**
-   - Interface dedicada para gerenciar usuários, empréstimos, reservas e transportes, com funcionalidades para administração de usuários.
+   - Haverá uma interface dedicada para gerenciar usuários, empréstimos, reservas e transportes, com funcionalidades para administração de usuários. Essa interface se comunicará com o backend para garantir que as informações sejam atualizadas e que os administradores possam gerenciar as operações da biblioteca com eficiência.
 
-8. **Pagamento Seguro:**
-   - Integração de uma solução de pagamento que permite transações seguras para reservas de livros e pagamentos de multas.
-
+8. **Pagamento Seguro (PayPal):**
+   - A integração de uma solução de pagamento permitirá transações seguras para reservas de livros e pagamentos de multas. O backend se comunicará com a API do serviço de pagamento, processando as transações e atualizando o banco de dados com informações sobre pagamentos realizados e pendentes.
+     
 ## 3. Interações entre Componentes
+### Comunicação entre Frontend e Backend
 
-1. O usuário abre o site e acessa a página inicial.
+- **Requisições HTTP/REST:** O frontend, construído com React, comunica-se com o backend (Node.js com Express.js) por meio de requisições HTTP. As interações seguem o padrão REST, onde cada operação é mapeada para um verbo HTTP:
+  - **GET:** Para buscar dados, como a lista de livros disponíveis.
+  - **POST:** Para criar novos registros, como ao reservar um livro.
+  - **PUT:** Para atualizar informações, como o status de um livro.
+  - **DELETE:** Para remover registros, como ao cancelar uma reserva.
 
-2. O usuário realiza uma pesquisa; o frontend solicita dados ao backend.
+### Comunicação do Backend com o Banco de Dados e Serviço de Notificações
 
-3. O backend retorna livros disponíveis, que são exibidos no frontend.
+- **Banco de Dados:** O backend se conecta ao banco de dados MySQL utilizando o Sequelize como ORM (Object-Relational Mapping). O Sequelize simplifica a execução de consultas SQL e a manipulação de dados.
 
-4. O usuário seleciona um livro e solicita a reserva.
+  - **Exemplo de interação:** Quando um usuário solicita a reserva de um livro, o backend verifica a disponibilidade do livro no banco de dados, atualiza seu status e registra a transação, exemplo logo abaixo.
 
-5. O backend verifica a disponibilidade e atualiza o banco de dados.
+- **Serviço de Notificações:** O backend se integra a um serviço externo de notificações (como Twilio ou Firebase Cloud Messaging) para enviar alertas sobre devoluções pendentes ou atrasos. As requisições para esse serviço seguem a arquitetura RESTful, semelhante às interações entre o frontend e o backend.
 
-6. O usuário realiza o pagamento seguro da reserva ou multa.
+1. **O usuário acessa a interface do sistema.**
+   - O usuário abre o site e acessa a página inicial.
 
-7. O sistema envia alertas sobre livros atrasados.
+2. **O Frontend (React) é carregado.**
+   - A interface inicial é exibida ao usuário.
 
-8. O administrador registra novos livros e gerencia usuários.
+3. **O usuário realiza uma pesquisa.**
+   - O Frontend envia uma requisição HTTP GET ao Backend (Node.js com Express.js) para buscar a lista de livros disponíveis.
 
-9. Coleta de opiniões para melhorar a experiência.
+4. **O Backend retorna a lista de livros.**
+   - O Backend acessa o Banco de Dados (MySQL com Sequelize), busca os livros disponíveis e retorna a lista ao Frontend.
+
+5. **O usuário seleciona um livro para reserva.**
+   - O usuário clica em um livro e o Frontend envia uma requisição HTTP POST ao Backend para solicitar a reserva do livro.
+
+6. **O Backend verifica a disponibilidade do livro.**
+   - O Backend consulta o Banco de Dados para verificar se o livro está disponível. Se sim, atualiza o status do livro para "reservado" e registra a transação.
+
+7. **O usuário realiza o pagamento seguro da reserva ou multa.**
+   - O Frontend direciona o usuário para uma página de pagamento, onde ele pode inserir os dados de pagamento. O Frontend então envia uma requisição ao Backend para processar o pagamento.
+
+8. **O sistema envia alertas sobre livros atrasados.**
+   - Se um livro estiver atrasado, o Backend utiliza um serviço de notificações para enviar alertas ao usuário.
+
+9. **O administrador registra novos livros e gerencia usuários.**
+   - O administrador acessa uma interface de gerenciamento no Frontend, onde pode adicionar novos livros e gerenciar informações dos usuários. O Frontend envia requisições ao Backend para essas operações.
+
+10. **Coleta de opiniões para melhorar a experiência.**
+    - O Frontend fornece um formulário de feedback onde os usuários podem enviar suas opiniões. As informações são enviadas ao Backend e armazenadas para futuras melhorias no sistema.
+   
+## 3.2 Diagrama de Fluxo de dados 
+### Operação de um empréstimo de um livro.
+![Diagrama de Fluxo de Dados](DiagramadeFluxo.png)
+
 
 ## 4. Decisões de Tecnologia
 
